@@ -1,0 +1,165 @@
+# Ignore Files - Secrets & Sensitive Data
+
+# ==========================================
+# SECRETS & CREDENTIALS (CRITICAL)
+# ==========================================
+.env
+.env.local
+.env.*.local
+.env.production
+*.key
+*.pem
+*.p12
+*.pfx
+*.pub
+.ssh/
+credentials.json
+secrets.yaml
+config-prod.yaml
+
+# ==========================================
+# PASSWORDS & TOKENS
+# ==========================================
+*password*
+*secret*
+*token*
+*apikey*
+*api_key*
+*access_token*
+*refresh_token*
+auth.conf
+
+# ==========================================
+# DATABASE & BACKUPS
+# ==========================================
+*.sql
+*.sql.gz
+*.backup
+*.bak
+*.restore
+*.dump
+*.db
+*.sqlite3
+*.sqlite
+
+# ==========================================
+# LOGS
+# ==========================================
+logs/
+*.log
+*.log.*
+/var/log/*
+
+# ==========================================
+# OS & IDE
+# ==========================================
+.DS_Store
+Thumbs.db
+.vscode/settings.json
+.vscode/launch.json
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.c9/
+*.sublime-project
+*.sublime-workspace
+
+# ==========================================
+# DEPENDENCY & BUILD
+# ==========================================
+node_modules/
+dist/
+build/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.venv/
+venv/
+env/
+*.egg
+.gradle/
+.m2/
+target/
+
+# ==========================================
+# PRIVATE DOCUMENTATION
+# ==========================================
+/docs/private/
+/docs/internal-only/
+PRIVATE_NOTES.md
+INTERNAL_*.md
+TODO_SENSITIVE.md
+
+# ==========================================
+# INFRASTRUCTURE CONFIGS (REDACTED)
+# ==========================================
+terraform.tfvars
+*.tfvars
+.terraform/
+.terraform.lock.hcl
+ansible/group_vars/all/vault.yml
+inventory/hosts.yml
+
+# ==========================================
+# NETWORK CONFIGS
+# ==========================================
+*.conf
+network-topology-actual.drawio
+firewall-rules-actual.txt
+router-config-backup.conf
+switch-config-*.backup
+
+# ==========================================
+# CUSTOMER/BUSINESS DATA (COMPLIANCE)
+# ==========================================
+customers/
+orders/
+devis/
+*.csv
+*.xlsx
+*.xls
+export_*.json
+
+# ==========================================
+# CERTIFICATE FILES
+# ==========================================
+*.cert
+*.crt
+*.cer
+*.der
+*.p7b
+cacert.pem
+
+# ==========================================
+# DEPLOYMENT & CI/CD (SECRETS)
+# ==========================================
+.github/workflows/secrets.yml
+.gitlab-ci-prod.yml
+deploy-prod-vars.env
+pipeline-secrets.yaml
+
+# ==========================================
+# TEMP FILES
+# ==========================================
+*.tmp
+*.temp
+*.cache
+.cache/
+tmp/
+temp/
+
+# ==========================================
+# MISC SENSITIVE
+# ==========================================
+.git-credentials
+.docker/config.json
+kubeconfig
+.kube/config
+jwt_secret
+private-key.txt
+odoo-db-backup.backup
+nas-credentials.txt
