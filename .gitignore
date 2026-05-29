@@ -30,6 +30,13 @@ config-prod.yaml
 auth.conf
 
 # ==========================================
+# CREDENTIALS & ACCÈS (JAMAIS COMMITTER)
+# ==========================================
+docs/CREDENTIALS.md
+CREDENTIALS.md
+*CREDENTIALS*
+
+# ==========================================
 # DATABASE & BACKUPS
 # ==========================================
 *.sql

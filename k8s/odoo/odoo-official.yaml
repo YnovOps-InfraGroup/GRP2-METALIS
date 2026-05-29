@@ -1,0 +1,170 @@
+## Odoo — déploiement via images officielles Docker Hub
+## Image Odoo : odoo:18  (officielle https://hub.docker.com/_/odoo)
+## Image DB   : postgres:16
+## Namespace  : odoo
+## URL        : http://odoo.10.1.248.6.nip.io
+##
+## Note: bitnami/odoo retiré du catalogue gratuit (août 2025)
+## → On utilise les images officielles Docker Hub directement
+---
+## ─── PostgreSQL ────────────────────────────────────────────
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: odoo-db
+  namespace: odoo
+spec:
+  selector:
+    matchLabels:
+      app: odoo-db
+  serviceName: odoo-db
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: odoo-db
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:16
+          env:
+            - name: POSTGRES_DB
+              value: odoo
+            - name: POSTGRES_USER
+              value: odoo
+            - name: POSTGRES_PASSWORD
+              value: "***REDACTED***"
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+          ports:
+            - containerPort: 5432
+          resources:
+            requests:
+              cpu: 200m
+              memory: 256Mi
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+          volumeMounts:
+            - name: pgdata
+              mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+    - metadata:
+        name: pgdata
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: local-path
+        resources:
+          requests:
+            storage: 10Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: odoo-db
+  namespace: odoo
+spec:
+  selector:
+    app: odoo-db
+  ports:
+    - port: 5432
+      targetPort: 5432
+---
+## ─── PVC données Odoo ──────────────────────────────────────
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: odoo-data
+  namespace: odoo
+spec:
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: local-path
+  resources:
+    requests:
+      storage: 10Gi
+---
+## ─── Odoo Application ──────────────────────────────────────
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: odoo
+  namespace: odoo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: odoo
+  template:
+    metadata:
+      labels:
+        app: odoo
+    spec:
+      initContainers:
+        - name: wait-for-db
+          image: busybox:1.36
+          command: ['sh', '-c', 'until nc -z odoo-db 5432; do echo "Waiting for PostgreSQL..."; sleep 3; done']
+      containers:
+        - name: odoo
+          image: odoo:18
+          env:
+            - name: HOST
+              value: odoo-db
+            - name: PORT
+              value: "5432"
+            - name: USER
+              value: odoo
+            - name: PASSWORD
+              value: "***REDACTED***"
+          ports:
+            - containerPort: 8069
+          resources:
+            requests:
+              cpu: 500m
+              memory: 1Gi
+            limits:
+              cpu: 2000m
+              memory: 2Gi
+          volumeMounts:
+            - name: odoo-data
+              mountPath: /var/lib/odoo
+      volumes:
+        - name: odoo-data
+          persistentVolumeClaim:
+            claimName: odoo-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: odoo
+  namespace: odoo
+spec:
+  selector:
+    app: odoo
+  ports:
+    - port: 8069
+      targetPort: 8069
+---
+## ─── Ingress ────────────────────────────────────────────────
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: odoo
+  namespace: odoo
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-redirect-from: "http://odoo.10.1.248.6.nip.io:8069"
+    nginx.ingress.kubernetes.io/proxy-redirect-to: "http://odoo.10.1.248.6.nip.io"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: odoo.10.1.248.6.nip.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: odoo
+                port:
+                  number: 8069

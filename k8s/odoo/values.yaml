@@ -1,0 +1,44 @@
+## Odoo — values Helm (bitnami/odoo)
+## Namespace : odoo
+## URL : http://odoo.10.1.248.6.nip.io
+
+odooUsername: admin
+# odooPassword : voir CREDENTIALS.md
+odooPassword: "***REDACTED***"
+odooEmail: admin@metalis.local
+
+## PostgreSQL
+postgresql:
+  enabled: true
+  auth:
+    postgresPassword: "***REDACTED***"
+    password: "***REDACTED***"
+    database: odoo
+    username: odoo
+
+## Stockage
+persistence:
+  enabled: true
+  size: 10Gi
+  storageClass: local-path
+
+## Service & Ingress
+service:
+  type: ClusterIP
+
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  hostname: odoo.10.1.248.6.nip.io
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+
+## Ressources
+resources:
+  requests:
+    cpu: 500m
+    memory: 1Gi
+  limits:
+    cpu: 2000m
+    memory: 2Gi

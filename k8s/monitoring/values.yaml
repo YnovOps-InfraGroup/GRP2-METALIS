@@ -1,0 +1,81 @@
+## kube-prometheus-stack — values Helm
+## Repo : prometheus-community/kube-prometheus-stack
+## Namespace : monitoring
+## Grafana URL : http://grafana.10.1.248.6.nip.io
+
+## Grafana
+grafana:
+  enabled: true
+  adminUser: admin
+  # adminPassword : voir CREDENTIALS.md
+  adminPassword: "***REDACTED***"
+  persistence:
+    enabled: true
+    size: 5Gi
+    storageClass: local-path
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+      - grafana.10.1.248.6.nip.io
+    paths:
+      - /
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+## Prometheus
+prometheus:
+  prometheusSpec:
+    retention: 15d
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: local-path
+          resources:
+            requests:
+              storage: 10Gi
+    resources:
+      requests:
+        cpu: 200m
+        memory: 512Mi
+      limits:
+        cpu: 1000m
+        memory: 1Gi
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+      - prometheus.10.1.248.6.nip.io
+    paths:
+      - /
+
+## AlertManager
+alertmanager:
+  alertmanagerSpec:
+    storage:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: local-path
+          resources:
+            requests:
+              storage: 2Gi
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+      - alertmanager.10.1.248.6.nip.io
+    paths:
+      - /
+
+## Node Exporter (métriques VM)
+nodeExporter:
+  enabled: true
+
+## kube-state-metrics (métriques k8s)
+kubeStateMetrics:
+  enabled: true

@@ -1,0 +1,21 @@
+## ingress-nginx — values Helm
+## Repo : https://kubernetes.github.io/ingress-nginx
+## helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+
+controller:
+  service:
+    type: LoadBalancer
+    # Sur k3s avec ServiceLB (klipper), l'IP sera 10.1.248.6
+  ingressClassResource:
+    name: nginx
+    default: true
+  config:
+    use-real-ip: "true"
+    proxy-body-size: "50m"
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 256Mi

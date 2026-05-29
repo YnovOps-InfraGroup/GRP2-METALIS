@@ -1,0 +1,32 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: wordpress
+  labels:
+    app: wordpress
+    project: metalis
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nextcloud
+  labels:
+    app: nextcloud
+    project: metalis
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: odoo
+  labels:
+    app: odoo
+    project: metalis
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: monitoring
+  labels:
+    app: monitoring
+    project: metalis

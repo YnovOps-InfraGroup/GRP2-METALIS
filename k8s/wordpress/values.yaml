@@ -1,0 +1,46 @@
+## WordPress — values Helm (bitnami/wordpress)
+## Namespace : wordpress
+## URL : http://wordpress.10.1.248.6.nip.io
+
+wordpressUsername: admin
+# wordpressPassword : voir CREDENTIALS.md
+wordpressPassword: "***REDACTED***"
+wordpressEmail: admin@metalis.local
+wordpressBlogName: "METALIS - Portail Web"
+wordpressFirstName: Admin
+wordpressLastName: Metalis
+
+## MariaDB
+mariadb:
+  enabled: true
+  auth:
+    rootPassword: "***REDACTED***"
+    password: "***REDACTED***"
+    database: wordpress
+    username: wordpress
+
+## Stockage
+persistence:
+  enabled: true
+  size: 8Gi
+  storageClass: local-path
+
+## Service & Ingress
+service:
+  type: ClusterIP
+
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  hostname: wordpress.10.1.248.6.nip.io
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+
+## Ressources
+resources:
+  requests:
+    cpu: 200m
+    memory: 256Mi
+  limits:
+    cpu: 1000m
+    memory: 512Mi
