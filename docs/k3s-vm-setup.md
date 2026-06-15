@@ -11,13 +11,13 @@
 
 ### Spécifications VM
 
-| Ressource | Valeur |
-|---|---|
-| vCPU | 6 |
-| RAM | 16 GB |
-| Disque OS (vda) | 4 GB (Ubuntu cloud image) |
+| Ressource         | Valeur                          |
+| ----------------- | ------------------------------- |
+| vCPU              | 6                               |
+| RAM               | 16 GB                           |
+| Disque OS (vda)   | 4 GB (Ubuntu cloud image)       |
 | Disque Data (sda) | **80 GB** (ajouté manuellement) |
-| Réseau | `eth0` — 10.1.248.0/24 |
+| Réseau            | `eth0` — 10.1.248.0/24          |
 
 > Ajouter la clé SSH publique au profil OpenNebula avant de créer la VM.
 > Procédure : https://github.com/Enov-Salle-Serveur/Documentation_Public/blob/main/Procédure/Nebula_Add_SSH_Key.md

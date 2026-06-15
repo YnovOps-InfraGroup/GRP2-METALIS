@@ -4,36 +4,35 @@ Schéma Infra [Actuel](https://mermaid.live/edit#pako:eNqVVutuKjcQfpXRSidK1JATSI
 
 Plan de modernisation budget 50k € :
 
-* Mise en place de Backup sécurisé \> Veeam SRV   
-  * Repo NAS et Externe   
-* Switch redondé  
-* Changement SRV par cluster \> Prox ou VME  
-* Baie de Stockage \> Synology ou Qnap avec NFSv3  
-* Intégration NAS récent (actuelle 15 ans) \> Synology ou Qnap  
-* Bornes Instable \> Pourquoi ? Surcharge ou manque de puissance   
-  * Surcharge on prend plus  
-  * Manque de puissance on en prends des plus récente / adapté  
-* Mise en Place VPN \> Wireguard  
-* Mise en Place FW \> OPNsense  
-* Presta Monitoring   
-  * Mise en place de supervision   
-  * Gestion des BKP  
-* Presta Audit  
-  * Voir configuration soft  
-  * Voir configuration matériel  
-  * Voir si poste atelier besoin changement  
-* Segmentation RZO   
-  * Atelier Poste  
-  * Atelier Caméra  
-  * Atelier WIFI  
-  * Atelier CNC  
-  * Bureaux  
-  * Admin  
-  * Serveur  
-  * BKP  
-    
+* Mise en place de Backup sécurisé \> Veeam SRV
+  * Repo NAS et Externe
+* Switch redondé
+* Changement SRV par cluster \> Prox ou VME
+* Baie de Stockage \> Synology ou Qnap avec NFSv3
+* Intégration NAS récent (actuelle 15 ans) \> Synology ou Qnap
+* Bornes Instable \> Pourquoi ? Surcharge ou manque de puissance
+  * Surcharge on prend plus
+  * Manque de puissance on en prends des plus récente / adapté
+* Mise en Place VPN \> Wireguard
+* Mise en Place FW \> OPNsense
+* Presta Monitoring
+  * Mise en place de supervision
+  * Gestion des BKP
+* Presta Audit
+  * Voir configuration soft
+  * Voir configuration matériel
+  * Voir si poste atelier besoin changement
+* Segmentation RZO
+  * Atelier Poste
+  * Atelier Caméra
+  * Atelier WIFI
+  * Atelier CNC
+  * Bureaux
+  * Admin
+  * Serveur
+  * BKP
 
-## 
+##
 
 ## **Logiciels & usages**
 
@@ -48,4 +47,4 @@ Plan de modernisation budget 50k € :
 | Surveillance | Caméras IP atelier |
 | Mobilité | Tablettes pour bons de fabrication |
 
-## 
+##

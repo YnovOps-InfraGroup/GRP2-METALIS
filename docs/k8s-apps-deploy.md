@@ -162,11 +162,11 @@ helm list -A
 
 ## Accès rapide — Récapitulatif URLs
 
-| App | URL | Namespace |
-|---|---|---|
-| WordPress | http://wordpress.10.1.248.6.nip.io | wordpress |
-| Nextcloud | http://nextcloud.10.1.248.6.nip.io | nextcloud |
-| Odoo ERP | http://odoo.10.1.248.6.nip.io | odoo |
-| Grafana | http://grafana.10.1.248.6.nip.io | monitoring |
-| Prometheus | http://prometheus.10.1.248.6.nip.io | monitoring |
+| App          | URL                                   | Namespace  |
+| ------------ | ------------------------------------- | ---------- |
+| WordPress    | http://wordpress.10.1.248.6.nip.io    | wordpress  |
+| Nextcloud    | http://nextcloud.10.1.248.6.nip.io    | nextcloud  |
+| Odoo ERP     | http://odoo.10.1.248.6.nip.io         | odoo       |
+| Grafana      | http://grafana.10.1.248.6.nip.io      | monitoring |
+| Prometheus   | http://prometheus.10.1.248.6.nip.io   | monitoring |
 | AlertManager | http://alertmanager.10.1.248.6.nip.io | monitoring |
