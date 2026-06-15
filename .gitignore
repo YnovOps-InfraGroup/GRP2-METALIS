@@ -160,6 +160,16 @@ tmp/
 temp/
 
 # ==========================================
+# TROUBLESHOOTING & FIX SCRIPTS (LOCAL ONLY)
+# ==========================================
+# Scripts and documentation with embedded credentials - keep local only
+FIX-*.sh
+*-FIX.sh
+FIX-*.md
+k8s/FIX-ODOO-NEXTCLOUD.sh
+k8s/FIX-ODOO-NEXTCLOUD-PROCEDURE.md
+
+# ==========================================
 # MISC SENSITIVE
 # ==========================================
 .git-credentials
