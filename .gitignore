@@ -35,6 +35,10 @@ auth.conf
 docs/CREDENTIALS.md
 CREDENTIALS.md
 *CREDENTIALS*
+# Dossier velero complet (IaC local uniquement - ne pas publier)
+infrastructure/velero/
+# Velero credentials (sensible - contient les secrets Azure)
+credentials-velero
 
 # ==========================================
 # DATABASE & BACKUPS
