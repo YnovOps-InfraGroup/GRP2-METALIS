@@ -170,8 +170,6 @@ temp/
 FIX-*.sh
 *-FIX.sh
 FIX-*.md
-k8s/FIX-ODOO-NEXTCLOUD.sh
-k8s/FIX-ODOO-NEXTCLOUD-PROCEDURE.md
 
 # ==========================================
 # MISC SENSITIVE

@@ -10,14 +10,6 @@ metadata:
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: nextcloud
-  labels:
-    app: nextcloud
-    project: metalis
----
-apiVersion: v1
-kind: Namespace
-metadata:
   name: odoo
   labels:
     app: odoo

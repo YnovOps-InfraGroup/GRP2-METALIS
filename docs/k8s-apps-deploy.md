@@ -13,7 +13,7 @@
 kubectl apply -f k8s/namespaces.yaml
 
 # Vérification
-kubectl get namespaces | grep -E 'wordpress|nextcloud|odoo|monitoring'
+kubectl get namespaces | grep -E 'wordpress|odoo|monitoring'
 ```
 
 ---
@@ -50,31 +50,7 @@ kubectl get ingress -n wordpress
 
 ---
 
-## 3. Nextcloud
-
-> Chart officiel `nextcloud/nextcloud` — bitnami/nextcloud retiré du catalogue gratuit (août 2025)
-
-```bash
-# Ajouter le repo officiel Nextcloud
-helm repo add nextcloud https://nextcloud.github.io/helm/
-helm repo update
-
-helm install nextcloud nextcloud/nextcloud \
-  --namespace nextcloud \
-  -f k8s/nextcloud/values.yaml
-
-# Suivi (Nextcloud est long au premier démarrage ~3-5 min)
-kubectl rollout status deployment/nextcloud -n nextcloud
-kubectl get pods -n nextcloud
-kubectl get ingress -n nextcloud
-```
-
-**Accès** : http://nextcloud.10.1.248.6.nip.io
-**Credentials** : voir `docs/CREDENTIALS.md`
-
----
-
-## 4. Odoo
+## 3. Odoo
 
 > bitnami/odoo retiré du catalogue gratuit (août 2025) → déploiement via images officielles `odoo:18` + `postgres:16`
 
@@ -100,7 +76,7 @@ kubectl get ingress -n odoo
 
 ---
 
-## 5. Monitoring (Prometheus + Grafana)
+## 4. Monitoring (Prometheus + Grafana)
 
 ```bash
 helm install monitoring prometheus-community/kube-prometheus-stack \
@@ -165,7 +141,6 @@ helm list -A
 | App          | URL                                   | Namespace  |
 | ------------ | ------------------------------------- | ---------- |
 | WordPress    | http://wordpress.10.1.248.6.nip.io    | wordpress  |
-| Nextcloud    | http://nextcloud.10.1.248.6.nip.io    | nextcloud  |
 | Odoo ERP     | http://odoo.10.1.248.6.nip.io         | odoo       |
 | Grafana      | http://grafana.10.1.248.6.nip.io      | monitoring |
 | Prometheus   | http://prometheus.10.1.248.6.nip.io   | monitoring |
