@@ -418,3 +418,4 @@ PROFESSIONAL SERVICES (3k€):
 **Document Version:** 1.0
 **Last Updated:** 16 juin 2026
 **Next Update:** Post-RDV 2 (client feedback integration)
+16-06-2026
