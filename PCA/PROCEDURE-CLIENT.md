@@ -182,8 +182,6 @@ wordpress-xxx           1/1     Running   metalis-worker2   ← replanifié !
 wordpress-mariadb-0     1/1     Running   metalis-worker2
 ```
 
-
-
 ---
 
 ### 3.3 Les services restent accessibles via la VIP
@@ -202,8 +200,6 @@ curl -sI -H "Host: wordpress.10.1.248.100.nip.io" http://10.1.248.100/ | head -3
 curl -sI -H "Host: odoo.10.1.248.100.nip.io" http://10.1.248.100/web/login | head -3
 # HTTP/1.1 200 OK  ✓
 ```
-
-
 
 ---
 
@@ -241,8 +237,6 @@ ssh root@10.1.248.15 "kubectl get volumes.longhorn.io -n longhorn-system \
   -o custom-columns='NOM:.metadata.name,SANTE:.status.robustness'"
 # Toutes les lignes : healthy (après quelques minutes)
 ```
-
-
 
 ---
 
