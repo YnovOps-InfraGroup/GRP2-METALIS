@@ -1,10 +1,11 @@
 ## WordPress — values Helm (bitnami/wordpress)
 ## Namespace : wordpress
-## URL : http://wordpress.10.1.248.6.nip.io
+## URL : http://wordpress.10.1.248.100.nip.io
 
 wordpressUsername: admin
-# wordpressPassword : voir CREDENTIALS.md
-wordpressPassword: "***REDACTED***"
+# ⚠️ Passwords gérés via docs/CREDENTIALS.md (non versionné)
+# Passer via --set à l'install : helm install ... --set wordpressPassword=xxx
+wordpressPassword: "CHANGE_ME"
 wordpressEmail: admin@metalis.local
 wordpressBlogName: "METALIS - Portail Web"
 wordpressFirstName: Admin
@@ -14,8 +15,9 @@ wordpressLastName: Metalis
 mariadb:
   enabled: true
   auth:
-    rootPassword: "***REDACTED***"
-    password: "***REDACTED***"
+    # ⚠️ Remplacer via --set mariadb.auth.rootPassword=xxx
+    rootPassword: "CHANGE_ME"
+    password: "CHANGE_ME"
     database: wordpress
     username: wordpress
 
@@ -23,7 +25,7 @@ mariadb:
 persistence:
   enabled: true
   size: 8Gi
-  storageClass: local-path
+  storageClass: longhorn
 
 ## Service & Ingress
 service:
@@ -32,7 +34,7 @@ service:
 ingress:
   enabled: true
   ingressClassName: nginx
-  hostname: wordpress.10.1.248.6.nip.io
+  hostname: wordpress.10.1.248.100.nip.io
   annotations:
     nginx.ingress.kubernetes.io/proxy-body-size: "50m"
 

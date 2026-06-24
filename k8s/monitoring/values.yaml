@@ -1,14 +1,14 @@
 ## kube-prometheus-stack — values Helm
 ## Repo : prometheus-community/kube-prometheus-stack
 ## Namespace : monitoring
-## Grafana URL : http://grafana.10.1.248.6.nip.io
+## Grafana URL : http://grafana.10.1.248.100.nip.io
 
 ## Grafana
 grafana:
   enabled: true
   adminUser: admin
-  # adminPassword : voir CREDENTIALS.md
-  adminPassword: "***REDACTED***"
+  # ⚠️ Passwords gérés via docs/CREDENTIALS.md
+  adminPassword: "CHANGE_ME"
   persistence:
     enabled: true
     size: 5Gi
@@ -17,7 +17,7 @@ grafana:
     enabled: true
     ingressClassName: nginx
     hosts:
-      - grafana.10.1.248.6.nip.io
+      - grafana.10.1.248.100.nip.io
     paths:
       - /
   resources:
@@ -50,7 +50,7 @@ prometheus:
     enabled: true
     ingressClassName: nginx
     hosts:
-      - prometheus.10.1.248.6.nip.io
+      - prometheus.10.1.248.100.nip.io
     paths:
       - /
 
@@ -68,7 +68,7 @@ alertmanager:
     enabled: true
     ingressClassName: nginx
     hosts:
-      - alertmanager.10.1.248.6.nip.io
+      - alertmanager.10.1.248.100.nip.io
     paths:
       - /
 

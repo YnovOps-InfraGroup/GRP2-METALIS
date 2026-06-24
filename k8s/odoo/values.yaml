@@ -3,16 +3,16 @@
 ## URL : http://odoo.10.1.248.6.nip.io
 
 odooUsername: admin
-# odooPassword : voir CREDENTIALS.md
-odooPassword: "***REDACTED***"
+# ⚠️ Passwords gérés via docs/CREDENTIALS.md
+odooPassword: "CHANGE_ME"
 odooEmail: admin@metalis.local
 
 ## PostgreSQL
 postgresql:
   enabled: true
   auth:
-    postgresPassword: "***REDACTED***"
-    password: "***REDACTED***"
+    postgresPassword: "CHANGE_ME"
+    password: "CHANGE_ME"
     database: odoo
     username: odoo
 
@@ -29,7 +29,7 @@ service:
 ingress:
   enabled: true
   ingressClassName: nginx
-  hostname: odoo.10.1.248.6.nip.io
+  hostname: odoo.10.1.248.100.nip.io
   annotations:
     nginx.ingress.kubernetes.io/proxy-body-size: "50m"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
