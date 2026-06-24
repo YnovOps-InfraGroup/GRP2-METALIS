@@ -51,7 +51,7 @@
 ssh root@10.1.248.15 "kubectl get nodes -o wide"
 ```
 
-**Résultat attendu :**
+**Résultat observé :**
 
 ```
 NAME                    STATUS   ROLES           AGE   VERSION
@@ -59,9 +59,6 @@ localhost.localdomain   Ready    control-plane   1h    v1.35.5+k3s1
 metalis-worker1         Ready    <none>          1h    v1.35.5+k3s1
 metalis-worker2         Ready    <none>          30m   v1.35.5+k3s1
 ```
-
-> 📸 **SCREENSHOT 1** — `kubectl get nodes -o wide`
-> Montrer les 3 lignes `Ready` avec les IPs.
 
 ---
 
@@ -73,7 +70,7 @@ metalis-worker2         Ready    <none>          30m   v1.35.5+k3s1
 ssh root@10.1.248.15 "kubectl get pods -n odoo -o wide && kubectl get pods -n wordpress -o wide"
 ```
 
-**Résultat attendu :**
+**Résultat observé :**
 
 ```
 NAMESPACE   NAME                   READY   STATUS    NODE
@@ -82,9 +79,6 @@ odoo        odoo-db-0              1/1     Running   metalis-worker1 ou worker2
 wordpress   wordpress-xxx          1/1     Running   metalis-worker1 ou worker2
 wordpress   wordpress-mariadb-0    1/1     Running   metalis-worker1 ou worker2
 ```
-
-> 📸 **SCREENSHOT 2** — pods avec colonne NODE
-> Montrer que les pods tournent sur les workers.
 
 ---
 
@@ -107,8 +101,6 @@ pvc-df9d3407-...  (odoo-pgdata)            attached   healthy
 pvc-e52aacab-...  (wordpress-mariadb)      attached   healthy
 ```
 
-> 📸 **SCREENSHOT 3** — `kubectl get volumes.longhorn.io` tous `healthy`
-
 ---
 
 ### 2.4 La VIP est active sur worker1
@@ -119,14 +111,12 @@ pvc-e52aacab-...  (wordpress-mariadb)      attached   healthy
 ssh root@10.1.248.13 "ip addr show eth0 | grep 'inet '"
 ```
 
-**Résultat attendu :**
+**Résultat observé :**
 
 ```
 inet 10.1.248.13/24 brd 10.1.248.255 scope global eth0
 inet 10.1.248.100/24 scope global secondary eth0   ← VIP présente
 ```
-
-> 📸 **SCREENSHOT 4** — VIP `10.1.248.100` sur `eth0` de worker1
 
 ---
 
@@ -136,9 +126,6 @@ Ouvrir le navigateur :
 
 - `http://wordpress.10.1.248.100.nip.io` → page WordPress visible
 - `http://odoo.10.1.248.100.nip.io` → page login Odoo visible
-
-> 📸 **SCREENSHOT 5** — navigateur montrant l'URL `10.1.248.100.nip.io` et le site WordPress chargé
-> 📸 **SCREENSHOT 6** — onglet Odoo avec URL `odoo.10.1.248.100.nip.io`
 
 ---
 
@@ -164,15 +151,12 @@ ssh root@10.1.248.13 "systemctl stop k3s-agent"
 ssh root@10.1.248.6 "ip addr show eth0 | grep 'inet '"
 ```
 
-**Résultat attendu :**
+**Résultat observé :**
 
 ```
 inet 10.1.248.6/24 brd 10.1.248.255 scope global eth0
 inet 10.1.248.100/24 scope global secondary eth0   ← VIP migrée !
 ```
-
-> 📸 **SCREENSHOT 7** — VIP `10.1.248.100` maintenant sur **worker2** `eth0`
-> C'est la preuve du basculement Keepalived.
 
 ---
 
@@ -198,7 +182,7 @@ wordpress-xxx           1/1     Running   metalis-worker2   ← replanifié !
 wordpress-mariadb-0     1/1     Running   metalis-worker2
 ```
 
-> 📸 **SCREENSHOT 8** — `kubectl get pods -o wide` : **tous les pods sur `metalis-worker2`**
+
 
 ---
 
@@ -219,8 +203,7 @@ curl -sI -H "Host: odoo.10.1.248.100.nip.io" http://10.1.248.100/web/login | hea
 # HTTP/1.1 200 OK  ✓
 ```
 
-> 📸 **SCREENSHOT 9** — navigateur WordPress `HTTP 200` après panne du master
-> L'URL est identique (`10.1.248.100.nip.io`). Le client ne voit aucune interruption.
+
 
 ---
 
@@ -259,7 +242,7 @@ ssh root@10.1.248.15 "kubectl get volumes.longhorn.io -n longhorn-system \
 # Toutes les lignes : healthy (après quelques minutes)
 ```
 
-> 📸 **SCREENSHOT 10** — `kubectl get nodes` : les 3 nœuds `Ready`
+
 
 ---
 
