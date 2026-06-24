@@ -35,8 +35,11 @@ auth.conf
 docs/CREDENTIALS.md
 CREDENTIALS.md
 *CREDENTIALS*
-# Dossier velero complet (IaC local uniquement - ne pas publier)
-infrastructure/velero/
+# Velero credentials & fichiers obsolètes (ne pas committer)
+infrastructure/velero/credentials-velero
+infrastructure/velero/main.bicep
+infrastructure/velero/parameters.biceparam
+infrastructure/velero/deploy.sh
 # Velero credentials (sensible - contient les secrets Azure)
 credentials-velero
 
@@ -110,8 +113,11 @@ TODO_SENSITIVE.md
 # ==========================================
 terraform.tfvars
 *.tfvars
+!terraform.tfvars.example
 .terraform/
 .terraform.lock.hcl
+*.tfstate
+*.tfstate.backup
 ansible/group_vars/all/vault.yml
 inventory/hosts.yml
 
