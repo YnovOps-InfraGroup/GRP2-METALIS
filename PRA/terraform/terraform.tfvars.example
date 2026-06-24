@@ -4,31 +4,31 @@
 # ================================================================
 
 # Azure Identity
-subscription_id = "***REDACTED_SUB_ID***"
-tenant_id       = "***REDACTED_TENANT_ID***"
+subscription_id = "<AZURE_SUBSCRIPTION_ID>"
+tenant_id       = "<AZURE_TENANT_ID>"
 
-# Localisation (contrainte subscription dabbadie-student)
-location            = "switzerlandnorth"
-resource_group_name = "rg-metalis-pra"
+# Localisation
+location            = "<AZURE_REGION>"          # ex: switzerlandnorth
+resource_group_name = "<RESOURCE_GROUP_NAME>"   # ex: rg-metalis-pra
 
 # VM
-vm_name          = "vm-metalis-pra"
-vm_size          = "Standard_B2s" # 2 vCPU, 4GB RAM (~30€/mois allumée)
+vm_name          = "<VM_NAME>"                  # ex: vm-metalis-pra
+vm_size          = "Standard_B2s"               # 2 vCPU, 4GB RAM (~30€/mois)
 admin_username   = "azureuser"
 os_disk_size_gb  = 64
-create_public_ip = true # false = économise ~4€/mois mais IP créée à l'activation
+create_public_ip = true
 
 # ⚠️ OBLIGATOIRE : remplacer par votre clé publique SSH
-ssh_public_key = "ssh-rsa AAAA... votre-cle-ici"
+ssh_public_key = "<SSH_PUBLIC_KEY>"
 
 # Sécurité : restreindre SSH/API à votre IP (recommandé)
-admin_source_address = "*" # Remplacer par votre IP : "203.0.113.42"
+admin_source_address = "<YOUR_IP>/32"           # ex: 203.0.113.42/32
 
 # Velero (doit correspondre au setup on-prem)
 velero_version         = "v1.14.0"
-velero_storage_account = "stobkpmetalis974"
-velero_container       = "contmetalisbkp974"
-velero_resource_group  = "rg-metalis"
+velero_storage_account = "<STORAGE_ACCOUNT>"    # ex: stobkpmetalisXXX
+velero_container       = "<BLOB_CONTAINER>"     # ex: contmetalisbkpXXX
+velero_resource_group  = "<VELERO_RG>"          # ex: rg-metalis
 
 # Tags
 tags = {
