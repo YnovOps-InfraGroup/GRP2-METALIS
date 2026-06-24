@@ -1,0 +1,125 @@
+# ================================================================
+# PRA METALIS — GitHub Actions Workflow
+# Activation/Désactivation du PRA Azure via GitHub
+#
+# Secrets requis dans GitHub :
+#   AZURE_CREDENTIALS       → JSON du Service Principal Azure
+#   VELERO_SP_CLIENT_ID     → Client ID du SP Velero
+#   VELERO_SP_CLIENT_SECRET → Secret du SP Velero
+#   SSH_PRIVATE_KEY         → Clé SSH privée pour la VM PRA
+#
+# Créer AZURE_CREDENTIALS :
+#   az ad sp create-for-rbac --name "sp-github-pra" \
+#     --role contributor \
+#     --scopes /subscriptions/***REDACTED_SUB_ID*** \
+#     --sdk-auth
+# ================================================================
+
+name: "PRA METALIS — Azure"
+
+on:
+    workflow_dispatch:
+        inputs:
+            action:
+                description: "Action à exécuter"
+                required: true
+                type: choice
+                options:
+                    - activate
+                    - deactivate
+                    - status
+
+env:
+    RESOURCE_GROUP: rg-metalis-pra
+    VM_NAME: vm-metalis-pra
+    ADMIN_USER: azureuser
+
+jobs:
+    pra:
+        name: "PRA ${{ github.event.inputs.action }}"
+        runs-on: ubuntu-latest
+        timeout-minutes: 30
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Azure Login
+              uses: azure/login@v2
+              with:
+                  creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+            # ─── STATUS ──────────────────────────────────────────
+            - name: "📊 Status VM PRA"
+              if: github.event.inputs.action == 'status'
+              run: |
+                  echo "## État de la VM PRA" >> $GITHUB_STEP_SUMMARY
+
+                  STATE=$(az vm get-instance-view \
+                    --resource-group $RESOURCE_GROUP \
+                    --name $VM_NAME \
+                    --query "instanceView.statuses[?starts_with(code, 'PowerState/')].displayStatus" \
+                    -o tsv 2>/dev/null || echo "Not Found")
+
+                  echo "| Paramètre | Valeur |" >> $GITHUB_STEP_SUMMARY
+                  echo "|-----------|--------|" >> $GITHUB_STEP_SUMMARY
+                  echo "| VM | $VM_NAME |" >> $GITHUB_STEP_SUMMARY
+                  echo "| État | $STATE |" >> $GITHUB_STEP_SUMMARY
+
+                  if [[ "$STATE" == *"running"* ]]; then
+                    IP=$(az vm show -d -g $RESOURCE_GROUP -n $VM_NAME --query publicIps -o tsv)
+                    echo "| IP | $IP |" >> $GITHUB_STEP_SUMMARY
+                    echo "| WordPress | http://wordpress.$IP.nip.io |" >> $GITHUB_STEP_SUMMARY
+                    echo "| Odoo | http://odoo.$IP.nip.io |" >> $GITHUB_STEP_SUMMARY
+                  fi
+
+            # ─── ACTIVATE ────────────────────────────────────────
+            - name: "🔑 Setup SSH Key"
+              if: github.event.inputs.action == 'activate'
+              run: |
+                  mkdir -p ~/.ssh
+                  echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/pra_key
+                  chmod 600 ~/.ssh/pra_key
+
+            - name: "🚨 Activer PRA"
+              if: github.event.inputs.action == 'activate'
+              env:
+                  PRA_SSH_KEY: ~/.ssh/pra_key
+                  VELERO_SP_CLIENT_ID: ${{ secrets.VELERO_SP_CLIENT_ID }}
+                  VELERO_SP_CLIENT_SECRET: ${{ secrets.VELERO_SP_CLIENT_SECRET }}
+                  AZURE_SUBSCRIPTION_ID: ***REDACTED_SUB_ID***
+                  AZURE_TENANT_ID: ***REDACTED_TENANT_ID***
+              run: |
+                  chmod +x PRA/scripts/activate-pra.sh
+                  ./PRA/scripts/activate-pra.sh
+
+            - name: "📋 Résumé activation"
+              if: github.event.inputs.action == 'activate'
+              run: |
+                  IP=$(az vm show -d -g $RESOURCE_GROUP -n $VM_NAME --query publicIps -o tsv)
+                  echo "## 🚨 PRA ACTIVÉ" >> $GITHUB_STEP_SUMMARY
+                  echo "" >> $GITHUB_STEP_SUMMARY
+                  echo "| Service | URL |" >> $GITHUB_STEP_SUMMARY
+                  echo "|---------|-----|" >> $GITHUB_STEP_SUMMARY
+                  echo "| WordPress | http://wordpress.$IP.nip.io |" >> $GITHUB_STEP_SUMMARY
+                  echo "| Odoo | http://odoo.$IP.nip.io |" >> $GITHUB_STEP_SUMMARY
+                  echo "| Grafana | http://grafana.$IP.nip.io |" >> $GITHUB_STEP_SUMMARY
+                  echo "| SSH | ssh $ADMIN_USER@$IP |" >> $GITHUB_STEP_SUMMARY
+
+            # ─── DEACTIVATE ──────────────────────────────────────
+            - name: "🔌 Désactiver PRA"
+              if: github.event.inputs.action == 'deactivate'
+              run: |
+                  chmod +x PRA/scripts/deactivate-pra.sh
+                  ./PRA/scripts/deactivate-pra.sh
+
+            - name: "📋 Résumé désactivation"
+              if: github.event.inputs.action == 'deactivate'
+              run: |
+                  echo "## 🔌 PRA DÉSACTIVÉ" >> $GITHUB_STEP_SUMMARY
+                  echo "VM désallouée. Coûts = disques seuls (~7€/mois)." >> $GITHUB_STEP_SUMMARY
+
+            # ─── CLEANUP ──────────────────────────────────────────
+            - name: "🧹 Cleanup SSH Key"
+              if: always() && github.event.inputs.action == 'activate'
+              run: rm -f ~/.ssh/pra_key
