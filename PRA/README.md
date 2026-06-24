@@ -20,17 +20,17 @@ pour restaurer les services critiques depuis les sauvegardes Velero.
 ```
 ON-PREM (PCA)                           AZURE (PRA)
 ┌──────────────┐                        ┌──────────────────────┐
-│ k3s cluster  │   Velero (2h AM)       │ rg-metalis-pra       │
-│ 10.1.248.6   │ ──────────────────►    │                      │
-│ ├─ WordPress │                        │ vm-metalis-pra (OFF) │
+│ k3s cluster  │   Velero (2h AM)       │ <RESOURCE_GROUP>     │
+│ 10.1.248.x   │ ──────────────────►    │                      │
+│ ├─ WordPress │                        │ <VM_NAME> (OFF)      │
 │ ├─ Odoo      │                        │ ├─ k3s pré-installé  │
 │ ├─ Monitoring│                        │ ├─ Velero CLI         │
 │ └─ Velero    │                        │ └─ 64GB Standard HDD │
 └──────────────┘                        └──────────────────────┘
        │                                         ▲
        │         ┌─────────────────┐             │
-       └────────►│ stobkpmetalis974│─────────────┘
-                 │ contmetalisbkp974│  Velero restore
+       └────────►│<STORAGE_ACCOUNT>│─────────────┘
+                 │<BLOB_CONTAINER> │  Velero restore
                  └─────────────────┘
 ```
 
@@ -59,8 +59,8 @@ PRA/
 
 ```bash
 # Azure CLI
-az login --tenant ***REDACTED_TENANT_ID***
-az account set --subscription ***REDACTED_SUB_ID***
+az login --tenant <AZURE_TENANT_ID>
+az account set --subscription <AZURE_SUBSCRIPTION_ID>
 
 # Terraform
 terraform --version  # >= 1.5.0
@@ -91,7 +91,7 @@ ssh -i ~/.ssh/pra_metalis azureuser@$PUBLIC_IP "sudo cloud-init status --wait"
 ssh -i ~/.ssh/pra_metalis azureuser@$PUBLIC_IP "sudo kubectl get nodes"
 
 # Désallouer la VM (mode dormant — 0€ compute)
-az vm deallocate --resource-group rg-metalis-pra --name vm-metalis-pra
+az vm deallocate --resource-group <RESOURCE_GROUP> --name <VM_NAME>
 ```
 
 ### 3. Activer le PRA (en cas de sinistre)
@@ -99,8 +99,8 @@ az vm deallocate --resource-group rg-metalis-pra --name vm-metalis-pra
 ```bash
 cd PRA/scripts
 
-export VELERO_SP_CLIENT_ID="***REDACTED_SP_ID***"
-export VELERO_SP_CLIENT_SECRET="votre-secret"
+export VELERO_SP_CLIENT_ID="<SERVICE_PRINCIPAL_CLIENT_ID>"
+export VELERO_SP_CLIENT_SECRET="<SERVICE_PRINCIPAL_SECRET>"
 export PRA_SSH_KEY="$HOME/.ssh/pra_metalis"
 
 chmod +x activate-pra.sh
