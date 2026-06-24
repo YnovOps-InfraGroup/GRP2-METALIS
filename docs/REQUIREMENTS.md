@@ -11,8 +11,8 @@
 
 | Exigence                           | Valeur                     | Justification                      |
 | ---------------------------------- | -------------------------- | ---------------------------------- |
-| **RTO** (Recovery Time Objective)  | 1h                         | Production 2×8, arrêt coûteux      |
-| **RPO** (Recovery Point Objective) | 5h indispo toléré          | Données CAO/Odoo <6h               |
+| **RTO** (Recovery Time Objective)  | 4h                         | Bascule manuelle automatisée Azure |
+| **RPO** (Recovery Point Objective) | 24h                        | Sauvegarde Velero quotidienne 2h00 |
 | **Disponibilité cible**            | 99.5%                      | Production continue, budget PME    |
 | **PRA**                            | Documenté + testé mensuels | Direction inquiète "vendredi 18h?" |
 | **Fenêtres maintenance**           | Sam/Dim nuit               | Pas d'arrêt production semaine     |

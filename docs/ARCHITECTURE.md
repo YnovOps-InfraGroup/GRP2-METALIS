@@ -19,8 +19,8 @@
 
 ### Exigences RTO/RPO
 
-- **RTO** : 1h acceptable, 5h indispo toléré
-- **RPO** : Données CAO : <6h, Odoo : <1h
+- **RTO** : 4h (bascule manuelle automatisée vers Azure)
+- **RPO** : 24h (sauvegarde Velero quotidienne à 2h00)
 - **Production 2×8** : Zéro arrêt = revenue direct impact
 
 ---
