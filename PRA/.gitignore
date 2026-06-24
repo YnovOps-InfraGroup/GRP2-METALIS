@@ -1,0 +1,19 @@
+# Kubeconfig — contient des clés privées, ne jamais committer
+kubeconfig-pra.yaml
+
+# Terraform
+terraform/.terraform/
+terraform/.terraform.lock.hcl
+terraform/PRA.plan
+terraform/PRA.plan.txt
+terraform/PRA.graph.dot
+terraform/PRA.graph.png
+terraform/PRA.graph.svg
+terraform/terraform.tfstate
+terraform/terraform.tfstate.backup
+terraform/terraform.tfvars
+
+# Credentials Velero
+credentials-velero
+*.secret
+*.env

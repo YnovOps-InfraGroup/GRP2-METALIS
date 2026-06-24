@@ -1,0 +1,38 @@
+# ================================================================
+# PRA METALIS — Terraform Variables
+# Copier en terraform.tfvars et adapter les valeurs
+# ================================================================
+
+# Azure Identity
+subscription_id = "***REDACTED_SUB_ID***"
+tenant_id       = "***REDACTED_TENANT_ID***"
+
+# Localisation (contrainte subscription dabbadie-student)
+location            = "switzerlandnorth"
+resource_group_name = "rg-metalis-pra"
+
+# VM
+vm_name          = "vm-metalis-pra"
+vm_size          = "Standard_B2s" # 2 vCPU, 4GB RAM (~30€/mois allumée)
+admin_username   = "azureuser"
+os_disk_size_gb  = 64
+create_public_ip = true # false = économise ~4€/mois mais IP créée à l'activation
+
+# ⚠️ OBLIGATOIRE : remplacer par votre clé publique SSH
+ssh_public_key = "ssh-rsa AAAA... votre-cle-ici"
+
+# Sécurité : restreindre SSH/API à votre IP (recommandé)
+admin_source_address = "*" # Remplacer par votre IP : "203.0.113.42"
+
+# Velero (doit correspondre au setup on-prem)
+velero_version         = "v1.14.0"
+velero_storage_account = "stobkpmetalis974"
+velero_container       = "contmetalisbkp974"
+velero_resource_group  = "rg-metalis"
+
+# Tags
+tags = {
+  project     = "metalis"
+  environment = "pra"
+  managed_by  = "terraform"
+}
