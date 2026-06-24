@@ -1,15 +1,30 @@
 # Setup VM + k3s — Procédure de reproduction
 
-**VM** : OpenNebula `nebula.cloud.enov.local:2616`
-**IP** : `10.1.248.6`
+**Hyperviseur** : OpenNebula `nebula.cloud.enov.local:2616`
 **OS** : Ubuntu 24.04.4 LTS
-**Date** : 29 mai 2026
+**Date mise à jour** : 24 juin 2026
+**Architecture** : 3 nœuds (1 Control-Plane + 2 Workers)
+
+---
+
+## Architecture du Cluster
+
+| Rôle          | Hostname          | IP            | vCPU | RAM   | Disque Data |
+| ------------- | ----------------- | ------------- | ---- | ----- | ----------- |
+| Control-Plane | `metalis-cp`      | `10.1.248.15` | 4    | 8 GB  | 40 GB       |
+| Worker 1      | `metalis-worker1` | `10.1.248.13` | 6    | 16 GB | 80 GB       |
+| Worker 2      | `metalis-worker2` | `10.1.248.6`  | 6    | 16 GB | 80 GB       |
+
+**VIP (Keepalived)** : `10.1.248.100` — flottante entre les 2 workers
+
+> Les workloads applicatifs tournent exclusivement sur les workers.
+> Le control-plane a un taint `CriticalAddonsOnly` (pas de pods applicatifs).
 
 ---
 
 ## 1. Prérequis OpenNebula
 
-### Spécifications VM
+### Spécifications VM (par nœud worker)
 
 | Ressource         | Valeur                          |
 | ----------------- | ------------------------------- |
@@ -25,7 +40,9 @@
 ### Connexion
 
 ```bash
-ssh root@10.1.248.6
+ssh root@10.1.248.15  # Control-Plane
+ssh root@10.1.248.13  # Worker 1
+ssh root@10.1.248.6   # Worker 2
 ```
 
 ---
@@ -110,20 +127,43 @@ apt-get install -y curl wget git ca-certificates \
 
 ## 5. Installation k3s
 
+### Control-Plane (metalis-cp — 10.1.248.15)
+
 ```bash
 curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server \
   --disable=traefik \
   --write-kubeconfig-mode=644 \
+  --tls-san=10.1.248.15 \
+  --tls-san=10.1.248.100 \
+  --node-taint CriticalAddonsOnly=true:NoSchedule \
   --data-dir=/var/lib/rancher" sh -
 
-# Vérification
+# Récupérer le token pour les workers
+cat /var/lib/rancher/server/node-token
+```
+
+### Workers (metalis-worker1, metalis-worker2)
+
+```bash
+# Sur chaque worker (remplacer <TOKEN> par le token du CP)
+curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="agent" \
+  K3S_URL="https://10.1.248.15:6443" \
+  K3S_TOKEN="<TOKEN>" sh -
+```
+
+### Vérification (depuis le CP)
+
+```bash
 kubectl get nodes -o wide
+# metalis-cp       Ready   control-plane,master
+# metalis-worker1  Ready   <none>
+# metalis-worker2  Ready   <none>
 kubectl get pods -A
 ```
 
 > - `--disable=traefik` : on utilisera ingress-nginx à la place
-> - `--data-dir=/var/lib/rancher` : pointe vers le disque 80 GB
-> - `--write-kubeconfig-mode=644` : kubeconfig lisible sans sudo
+> - `--node-taint` : empêche les pods applicatifs sur le CP
+> - `--tls-san=10.1.248.100` : la VIP Keepalived est ajoutée au certificat
 
 ---
 
@@ -150,6 +190,37 @@ echo 'export KUBECONFIG=/etc/rancher/k3s/k3s.yaml' >> /root/.bashrc
 ```bash
 k3s --version          # k3s version v1.35.5+k3s1
 helm version --short   # v3.21.0
-kubectl get nodes      # metalis-k3s   Ready
-df -h /var/lib/rancher # ~74GB libre
+kubectl get nodes      # 3 nœuds Ready (metalis-cp, metalis-worker1, metalis-worker2)
+df -h /var/lib/rancher # ~74GB libre (sur chaque nœud)
 ```
+
+---
+
+## 7. Keepalived (VIP haute disponibilité)
+
+> Installe sur les 2 workers une VIP flottante `10.1.248.100` pour l'accès aux applications.
+> Voir `PCA/PROCEDURES.md` pour la configuration détaillée.
+
+```bash
+apt-get install -y keepalived
+
+# Configuration : /etc/keepalived/keepalived.conf
+# Worker1 = MASTER (priority 110)
+# Worker2 = BACKUP (priority 90)
+systemctl enable --now keepalived
+```
+
+---
+
+## 8. Longhorn (stockage distribué)
+
+```bash
+# Depuis le CP
+kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/v1.7.2/deploy/longhorn.yaml
+
+# Vérification
+kubectl get pods -n longhorn-system --watch
+```
+
+> Longhorn réplique les volumes sur les 2 workers (2 replicas par défaut).
+> Configuration multipath requise — voir `PCA/PROCEDURES.md`.

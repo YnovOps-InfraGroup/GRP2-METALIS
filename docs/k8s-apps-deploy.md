@@ -1,9 +1,10 @@
 # Déploiement des applications — k3s METALIS
 
-**Cluster** : `metalis-k3s` (10.1.248.6)
-**Accès apps** : via `*.10.1.248.6.nip.io` (résolution DNS automatique)
+**Cluster** : k3s 3 nœuds (CP: `10.1.248.15`, Workers: `10.1.248.13`, `10.1.248.6`)
+**VIP** : `10.1.248.100` (Keepalived, flottante entre les 2 workers)
+**Accès apps** : via `*.10.1.248.100.nip.io` (résolution DNS automatique)
 
-> nip.io résout automatiquement `*.10.1.248.6.nip.io` → `10.1.248.6`, sans DNS local.
+> nip.io résout automatiquement `*.10.1.248.100.nip.io` → `10.1.248.100` (la VIP), sans DNS local.
 
 ---
 
@@ -26,7 +27,7 @@ helm install ingress-nginx ingress-nginx/ingress-nginx \
   --create-namespace \
   -f k8s/ingress-nginx/values.yaml
 
-# Attendre l'IP externe (ServiceLB k3s → 10.1.248.6)
+# Attendre l'IP externe (ServiceLB k3s → VIP 10.1.248.100)
 kubectl get svc -n ingress-nginx ingress-nginx-controller --watch
 ```
 
@@ -45,7 +46,7 @@ kubectl get pods -n wordpress
 kubectl get ingress -n wordpress
 ```
 
-**Accès** : http://wordpress.10.1.248.6.nip.io/wp-admin
+**Accès** : http://wordpress.10.1.248.100.nip.io/wp-admin
 **Credentials** : voir `docs/CREDENTIALS.md`
 
 ---
@@ -69,7 +70,7 @@ kubectl get pods -n odoo
 kubectl get ingress -n odoo
 ```
 
-**Accès** : http://odoo.10.1.248.6.nip.io
+**Accès** : http://odoo.10.1.248.100.nip.io
 **Credentials** : voir `docs/CREDENTIALS.md`
 
 > Au premier accès Odoo, configurer la base de données depuis l'interface web.
@@ -88,9 +89,9 @@ kubectl get pods -n monitoring --watch
 kubectl get ingress -n monitoring
 ```
 
-**Grafana** : http://grafana.10.1.248.6.nip.io
-**Prometheus** : http://prometheus.10.1.248.6.nip.io
-**AlertManager** : http://alertmanager.10.1.248.6.nip.io
+**Grafana** : http://grafana.10.1.248.100.nip.io
+**Prometheus** : http://prometheus.10.1.248.100.nip.io
+**AlertManager** : http://alertmanager.10.1.248.100.nip.io
 **Credentials** : voir `docs/CREDENTIALS.md`
 
 ---
@@ -140,8 +141,8 @@ helm list -A
 
 | App          | URL                                   | Namespace  |
 | ------------ | ------------------------------------- | ---------- |
-| WordPress    | http://wordpress.10.1.248.6.nip.io    | wordpress  |
-| Odoo ERP     | http://odoo.10.1.248.6.nip.io         | odoo       |
-| Grafana      | http://grafana.10.1.248.6.nip.io      | monitoring |
-| Prometheus   | http://prometheus.10.1.248.6.nip.io   | monitoring |
-| AlertManager | http://alertmanager.10.1.248.6.nip.io | monitoring |
+| WordPress    | http://wordpress.10.1.248.100.nip.io    | wordpress  |
+| Odoo ERP     | http://odoo.10.1.248.100.nip.io         | odoo       |
+| Grafana      | http://grafana.10.1.248.100.nip.io      | monitoring |
+| Prometheus   | http://prometheus.10.1.248.100.nip.io   | monitoring |
+| AlertManager | http://alertmanager.10.1.248.100.nip.io | monitoring |
